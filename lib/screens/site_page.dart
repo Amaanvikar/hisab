@@ -8,39 +8,7 @@ class AddSite extends StatefulWidget {
 }
 
 class _AddSiteState extends State<AddSite> {
-  final _site = [];
   final GlobalKey<AnimatedListState> _key = GlobalKey();
-
-  void AddSite() {
-    _site.insert(0, "Firm ${_site.length + 1}");
-    _key.currentState!.insertItem(
-      0,
-      duration: const Duration(seconds: 1),
-    );
-  }
-
-  void _removesite(int index) {
-    _key.currentState!.removeItem(
-      index,
-      (_, animation) {
-        return SizeTransition(
-          sizeFactor: animation,
-          child: const Card(
-            margin: EdgeInsets.all(10),
-            color: Colors.grey,
-            child: ListTile(
-              title: Text(
-                'Deleted',
-                style: TextStyle(fontSize: 18),
-              ),
-            ),
-          ),
-        );
-      },
-      duration: const Duration(milliseconds: 300),
-    );
-    _site.removeAt(index);
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -61,7 +29,49 @@ class _AddSiteState extends State<AddSite> {
             children: [
               MaterialButton(
                 splashColor: Colors.blueGrey,
-                onPressed: AddSite,
+                onPressed: () {
+                  showDialog(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return AlertDialog(
+                        title: const Text('Add Site Details'),
+                        content: const Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            TextField(
+                              decoration:
+                                  InputDecoration(labelText: 'Site Name'),
+                            ),
+                            SizedBox(height: 10),
+                            TextField(
+                              decoration:
+                                  InputDecoration(labelText: 'Location'),
+                            ),
+                            SizedBox(height: 10),
+                            TextField(
+                              decoration:
+                                  InputDecoration(labelText: 'Description'),
+                            ),
+                          ],
+                        ),
+                        actions: [
+                          TextButton(
+                            onPressed: () {
+                              Navigator.of(context).pop();
+                            },
+                            child: const Text('Close'),
+                          ),
+                          ElevatedButton(
+                            onPressed: () {
+                              // Handle your logic here
+                            },
+                            child: const Text('Save'),
+                          ),
+                        ],
+                      );
+                    },
+                  );
+                },
                 child: const Text(
                   'Add Site',
                   style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
@@ -69,38 +79,10 @@ class _AddSiteState extends State<AddSite> {
               ),
             ],
           ),
-          Expanded(
-            child: AnimatedList(
-                key: _key,
-                initialItemCount: 0,
-                padding: const EdgeInsets.all(10),
-                itemBuilder: (context, index, animation) {
-                  return SizeTransition(
-                    sizeFactor: animation,
-                    key: UniqueKey(),
-                    child: Card(
-                      margin: const EdgeInsets.all(10),
-                      color: Colors.orangeAccent,
-                      child: ListTile(
-                        title: Text(
-                          _site[index],
-                          style: const TextStyle(
-                            fontSize: 24,
-                          ),
-                        ),
-                        trailing: IconButton(
-                          icon: const Icon(Icons.delete),
-                          onPressed: () {
-                            _removesite(index);
-                          },
-                        ),
-                      ),
-                    ),
-                  );
-                }),
-          ),
         ],
       ),
     );
   }
 }
+
+void main() => runApp(MaterialApp(home: AddSite()));
